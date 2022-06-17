@@ -34,4 +34,18 @@ final class PersonTest extends TestCase
     {
         $this->assertNotNull($this->faker->lastName());
     }
+
+    public function testPersonInn()
+    {
+        $this->assertRegExp('/^[0-9]{12}$/', $this->faker->personInn);
+        $this->assertEquals("77", substr($this->faker->personInn("77"), 0, 2));
+        $this->assertEquals("02", substr($this->faker->personInn(2), 0, 2));
+    }
+
+    public function testPersonOgrn()
+    {
+        $this->assertRegExp('/^[0-9]{15}$/', $this->faker->personOgrn);
+        $this->assertEquals("77", substr($this->faker->personOgrn("77"), 3, 2));
+        $this->assertEquals("02", substr($this->faker->personOgrn(2), 3, 2));
+    }
 }

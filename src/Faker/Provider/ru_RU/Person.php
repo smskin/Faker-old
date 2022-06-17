@@ -176,4 +176,51 @@ class Person extends \Faker\Provider\Person
 
         return $lastName . static::randomElement(static::$lastNameSuffix);
     }
+
+    /**
+     * Example of validation: http://www.kholenkov.ru/data-validation/inn/
+     * @param string|null $areaCode
+     * @return string
+     */
+    public function personInn($areaCode = "")
+    {
+        if ($areaCode === "" || intval($areaCode) == 0) {
+            //Simple generation code for areas in Russian without check for valid
+            $areaCode = static::numberBetween(1, 91);
+        } else {
+            $areaCode = intval($areaCode);
+        }
+        $areaCode = str_pad($areaCode, 2, '0', STR_PAD_LEFT);
+        $innBase = $areaCode . static::numerify('########');
+        return $innBase . \Faker\Calculator\PersonInn::checksum($innBase);
+    }
+
+    /**
+     * Example of validation: http://www.kholenkov.ru/data-validation/ogrnip/
+     * @param string|null $areaCode
+     * @return string
+     */
+    public function personOgrn($areaCode = "")
+    {
+        if ($areaCode === "" || intval($areaCode) == 0) {
+            //Simple generation code for areas in Russian without check for valid
+            $areaCode = static::numberBetween(1, 91);
+        } else {
+            $areaCode = intval($areaCode);
+        }
+        $year = substr(
+            date(
+                'Y',
+                strtotime(
+                    '-' . rand(1, 30) . 'years'
+                )
+            ),
+            -2
+        );
+        $region = str_pad($areaCode, 2, '0', STR_PAD_LEFT);
+        $tail = str_pad(static::numberBetween(1, 999999999), 9, '0', STR_PAD_LEFT);
+        $result = '3' . $year . $region . $tail;
+        $n14 = strval(($result % 13) % 10);
+        return $result . $n14;
+    }
 }

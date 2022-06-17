@@ -39,8 +39,17 @@ final class CompanyTest extends TestCase
     {
         $phrase = $this->faker->catchPhrase;
         $this->assertNotNull($phrase);
-        $this->assertGreaterThanOrEqual(3,
+        $this->assertGreaterThanOrEqual(
+            3,
             count(explode(' ', $this->faker->catchPhrase)),
-            "'$phrase' - should be contain 3 word");
+            "'$phrase' - should be contain 3 word"
+        );
+    }
+
+    public function testOgrn()
+    {
+        $this->assertRegExp('/^[0-9]{13}$/', $this->faker->ogrn);
+        $this->assertEquals("77", substr($this->faker->ogrn("77"), 3, 2));
+        $this->assertEquals("02", substr($this->faker->ogrn(2), 3, 2));
     }
 }

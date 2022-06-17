@@ -116,4 +116,37 @@ class Company extends \Faker\Provider\Company
         }
         return substr($inn, 0, 4) . "01001";
     }
+
+    /**
+     * Python project: https://github.com/joke2k/faker/blob/master/faker/providers/company/ru_RU/__init__.py
+     * Example of validation: http://www.kholenkov.ru/data-validation/ogrn/
+     * @param string|null $areaCode
+     * @return string
+     */
+    public function ogrn($areaCode = "")
+    {
+        if ($areaCode === "" || intval($areaCode) == 0) {
+            //Simple generation code for areas in Russian without check for valid
+            $areaCode = static::numberBetween(1, 91);
+        } else {
+            $areaCode = intval($areaCode);
+        }
+        $sign = self::randomElement(
+            array(1, 5)
+        );
+        $year = substr(
+            date(
+                'Y',
+                strtotime(
+                    '-' . rand(1, 30) . 'years'
+                )
+            ),
+            -2
+        );
+        $region = str_pad($areaCode, 2, '0', STR_PAD_LEFT);
+        $tail = str_pad(static::numberBetween(1, 9999999), 7, '0', STR_PAD_LEFT);
+        $result = $sign . $year . $region . $tail;
+        $n13 = strval(($result % 11) % 10);
+        return $result . $n13;
+    }
 }
